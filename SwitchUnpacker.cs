@@ -271,25 +271,29 @@ namespace SwitchUnpacker
 
         Label AddLabel(string text, int y)
         {
-            Label l = new Label(); l.Text = text; l.Location = new Point(15, y); l.AutoSize = true;
+            Label l = new Label(); l.Text = text; l.Location = P(15, y); l.AutoSize = true;
             Controls.Add(l); return l;
         }
 
         void AddPathRow(int y, string value, out TextBox tb, out Button bt)
         {
-            tb = new TextBox(); tb.Location = new Point(15, y); tb.Size = new Size(490, 24); tb.Text = value;
-            bt = new Button(); bt.Text = "Browse..."; bt.Location = new Point(515, y - 1); bt.Size = new Size(90, 26);
+            tb = new TextBox(); tb.Location = P(15, y); tb.Size = Z(490, 24); tb.Text = value;
+            bt = new Button(); bt.Text = "Browse..."; bt.Location = P(515, y - 1); bt.Size = Z(90, 26);
             Controls.Add(tb); Controls.Add(bt);
         }
 
+        float scale = 1f;
+        Point P(int x, int y) { return new System.Drawing.Point((int)Math.Round(x * scale), (int)Math.Round(y * scale)); }
+        Size Z(int w, int h) { return new System.Drawing.Size((int)Math.Round(w * scale), (int)Math.Round(h * scale)); }
+
         public MainForm()
         {
+            using (Graphics g = Graphics.FromHwnd(IntPtr.Zero)) scale = g.DpiX / 96f;
             LoadSettings();
-            AutoScaleDimensions = new SizeF(96F, 96F);
-            AutoScaleMode = AutoScaleMode.Dpi;
+            AutoScaleMode = AutoScaleMode.None;
             Font = new Font("Segoe UI", 9F);
             Text = "Switch Unpacker";
-            ClientSize = new Size(620, 600);
+            ClientSize = Z(620, 600);
             StartPosition = FormStartPosition.CenterScreen;
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
@@ -313,35 +317,35 @@ namespace SwitchUnpacker
 
             GroupBox gbName = new GroupBox();
             gbName.Text = "Subfolder name inside the output folder";
-            gbName.Location = new Point(15, 195); gbName.Size = new Size(590, 110);
+            gbName.Location = P(15, 195); gbName.Size = Z(590, 110);
             Controls.Add(gbName);
-            rbFile = new RadioButton(); rbFile.Text = "Game file name"; rbFile.Location = new Point(15, 24); rbFile.AutoSize = true;
-            rbTitle = new RadioButton(); rbTitle.Text = "Game title (read from the game data)"; rbTitle.Location = new Point(15, 50); rbTitle.AutoSize = true;
-            rbCustom = new RadioButton(); rbCustom.Text = "Custom:"; rbCustom.Location = new Point(15, 76); rbCustom.AutoSize = true;
-            tbCustom = new TextBox(); tbCustom.Location = new Point(95, 74); tbCustom.Size = new Size(300, 24); tbCustom.Text = Get("custom", "");
+            rbFile = new RadioButton(); rbFile.Text = "Game file name"; rbFile.Location = P(15, 24); rbFile.AutoSize = true;
+            rbTitle = new RadioButton(); rbTitle.Text = "Game title (read from the game data)"; rbTitle.Location = P(15, 50); rbTitle.AutoSize = true;
+            rbCustom = new RadioButton(); rbCustom.Text = "Custom:"; rbCustom.Location = P(15, 76); rbCustom.AutoSize = true;
+            tbCustom = new TextBox(); tbCustom.Location = P(95, 74); tbCustom.Size = Z(300, 24); tbCustom.Text = Get("custom", "");
             gbName.Controls.AddRange(new Control[] { rbFile, rbTitle, rbCustom, tbCustom });
             string mode = Get("mode", "file");
             if (mode == "title") rbTitle.Checked = true; else if (mode == "custom") rbCustom.Checked = true; else rbFile.Checked = true;
 
             GroupBox gbEx = new GroupBox();
             gbEx.Text = "Extract";
-            gbEx.Location = new Point(15, 315); gbEx.Size = new Size(590, 60);
+            gbEx.Location = P(15, 315); gbEx.Size = Z(590, 60);
             Controls.Add(gbEx);
-            CheckBox cbProg = new CheckBox(); cbProg.Text = "exefs + romfs"; cbProg.Checked = true; cbProg.Enabled = false; cbProg.Location = new Point(15, 24); cbProg.AutoSize = true;
-            cbCtl = new CheckBox(); cbCtl.Text = "Control (title info, icons)"; cbCtl.Checked = GetB("control", true); cbCtl.Location = new Point(125, 24); cbCtl.AutoSize = true;
-            cbLegal = new CheckBox(); cbLegal.Text = "Legal"; cbLegal.Checked = GetB("legal", true); cbLegal.Location = new Point(320, 24); cbLegal.AutoSize = true;
-            cbData = new CheckBox(); cbData.Text = "Data"; cbData.Checked = GetB("data", true); cbData.Location = new Point(400, 24); cbData.AutoSize = true;
+            CheckBox cbProg = new CheckBox(); cbProg.Text = "exefs + romfs"; cbProg.Checked = true; cbProg.Enabled = false; cbProg.Location = P(15, 24); cbProg.AutoSize = true;
+            cbCtl = new CheckBox(); cbCtl.Text = "Control (title info, icons)"; cbCtl.Checked = GetB("control", true); cbCtl.Location = P(125, 24); cbCtl.AutoSize = true;
+            cbLegal = new CheckBox(); cbLegal.Text = "Legal"; cbLegal.Checked = GetB("legal", true); cbLegal.Location = P(320, 24); cbLegal.AutoSize = true;
+            cbData = new CheckBox(); cbData.Text = "Data"; cbData.Checked = GetB("data", true); cbData.Location = P(400, 24); cbData.AutoSize = true;
             gbEx.Controls.AddRange(new Control[] { cbProg, cbCtl, cbLegal, cbData });
 
-            cbOpen = new CheckBox(); cbOpen.Text = "Open folder when done"; cbOpen.Checked = GetB("open", true); cbOpen.Location = new Point(15, 392); cbOpen.AutoSize = true;
+            cbOpen = new CheckBox(); cbOpen.Text = "Open folder when done"; cbOpen.Checked = GetB("open", true); cbOpen.Location = P(15, 392); cbOpen.AutoSize = true;
             Controls.Add(cbOpen);
-            btStart = new Button(); btStart.Text = "Unpack"; btStart.Location = new Point(485, 385); btStart.Size = new Size(120, 34);
+            btStart = new Button(); btStart.Text = "Unpack"; btStart.Location = P(485, 385); btStart.Size = Z(120, 34);
             Controls.Add(btStart);
 
-            bar = new ProgressBar(); bar.Location = new Point(15, 430); bar.Size = new Size(590, 16); bar.Style = ProgressBarStyle.Continuous;
+            bar = new ProgressBar(); bar.Location = P(15, 430); bar.Size = Z(590, 16); bar.Style = ProgressBarStyle.Continuous;
             Controls.Add(bar);
             log = new TextBox(); log.Multiline = true; log.ReadOnly = true; log.ScrollBars = ScrollBars.Vertical;
-            log.Location = new Point(15, 455); log.Size = new Size(590, 130); log.Font = new Font("Consolas", 9F);
+            log.Location = P(15, 455); log.Size = Z(590, 130); log.Font = new Font("Consolas", 9F);
             Controls.Add(log);
 
             btFile.Click += delegate
